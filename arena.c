@@ -1,5 +1,18 @@
 #include "./arena.h"
 
+#define internal static
+
+struct Arena {
+    uint8_t* buf;
+    size_t   buf_len;
+    size_t   offset;
+};
+
+struct Temp_Arena {
+    Arena* arena;
+    size_t offset;
+};
+
 void arena_init(Arena* a, void* backing_buffer, size_t backing_buffer_len)
 {
     if (!a) return;
@@ -8,12 +21,12 @@ void arena_init(Arena* a, void* backing_buffer, size_t backing_buffer_len)
     a->offset  = 0;
 }
 
-static bool is_power_of_2(uintptr_t x)
+internal bool is_power_of_2(uintptr_t x)
 {
     return (x & (x - 1)) == 0;
 }
 
-static uintptr_t align_forward(uintptr_t ptr, size_t align)
+internal uintptr_t align_forward(uintptr_t ptr, size_t align)
 {
     uintptr_t p, a, modulo;
     assert(is_power_of_2(align));
