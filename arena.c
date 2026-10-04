@@ -32,13 +32,11 @@ void* arena_alloc_align(Arena* a, size_t size, size_t align)
 {
     if (!a) return NULL;
     uintptr_t curr_ptr = (uintptr_t)a->buf + (uintptr_t)a->offset;
-    uintptr_t offset = align_forward(curr_ptr, align);
+    uintptr_t offset   = align_forward(curr_ptr, align);
     offset -= (uintptr_t)a->buf; // Change to relative offset
-    if (offset + size <= a->buf_len){
-
+    if (offset + size <= a->buf_len) {
         void* ptr = &a->buf[offset];
         a->offset = offset + size;
-
         memset(ptr, 0, size);
         return ptr;
     }
@@ -48,6 +46,19 @@ void* arena_alloc_align(Arena* a, size_t size, size_t align)
 void* arena_alloc(Arena* a, size_t size)
 {
     return arena_alloc_align(a, size, DEFAULT_ALIGNMENT);
+}
+
+Temp_Arena temp_arena_begin(Arena* a)
+{
+    Temp_Arena tmp;
+    tmp.arena	= a;
+    tmp.offset	= a->offset;
+    return tmp;
+}
+
+void temp_arena_end(Temp_Arena tmp)
+{
+    tmp.arena->offset = tmp.offset;
 }
 
 void arena_reset(Arena* a)

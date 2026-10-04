@@ -18,9 +18,17 @@ struct Arena {
     size_t   offset;
 };
 
+typedef struct Temp_Arena Temp_Arena;
+struct Temp_Arena {
+    Arena* arena;
+    size_t offset;
+};
+
 void  arena_init(Arena* a, void* backing_buffer, size_t backing_buffer_len);
 void* arena_alloc_align(Arena* a, size_t size, size_t align);
 void* arena_alloc(Arena* a, size_t size);
+Temp_Arena temp_arena_begin(Arena* a);
+void temp_arena_end(Temp_Arena tmp);
 void  arena_reset(Arena* a);
 
 #endif // ARENA_H
